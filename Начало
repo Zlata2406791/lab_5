@@ -1,0 +1,8 @@
+# вывод 8 10 1
+import random
+from random import randint
+random.seed(4)
+s1 = randint(1, 28)
+s2 = randint(1, 28)
+s3 = randint(1, 7)
+print(s1, s2, s3)
