@@ -1,0 +1,40 @@
+# Дополнительная задача
+# В массивах А размером 9 и В размером 7 заменить максимальные элементы на среднее арифметическое значение элементов, раположенных после максимального, в том массиве, для которого максимальный элемент расположен дальше от конца массива. Поиск максимального элемента осуществить в методе.
+print('Задание 2.2')
+def find_max_index(arr):
+    return arr.index(max(arr))
+def calculate_average_after_max(arr, max_index):
+    if max_index < len(arr) - 1:
+        sub_array = arr[max_index + 1:]
+        return sum(sub_array) / len(sub_array)
+    return None
+
+def replace_max_with_average(arr):
+    max_index = find_max_index(arr)
+    average = calculate_average_after_max(arr, max_index)
+    if average is not None:
+        arr[max_index] = average
+
+def get_array_elements(prompt, expected_length):
+    while True:
+        arr = list(map(int, input(prompt).split()))
+        if len(arr) == expected_length:
+            return arr
+        print(f"Ошибка: Пожалуйста, введите ровно {expected_length} элементов.")
+
+def main():  
+    A = get_array_elements("Введите 9 элементов массива A, разделенных пробелами: ", 9)
+    B = get_array_elements("Введите 7 элементов массива B, разделенных пробелами: ", 7)
+    print("Исходный массив A:", A)
+    print("Исходный массив B:", B)
+    
+    max_index_A = find_max_index(A)
+    max_index_B = find_max_index(B)
+    if len(A) - max_index_A > len(B) - max_index_B:
+        replace_max_with_average(A)
+        print("Массив A после замены максимального элемента на среднее:", A)
+    else:
+        replace_max_with_average(B)
+        print("Массив B после замены максимального элемента на среднее:", B)
+if __name__ == "__main__":
+    main()
