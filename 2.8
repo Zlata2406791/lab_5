@@ -8,21 +8,35 @@ def insertion_sort(arr):
             arr[j + 1] = arr[j]
             j -= 1
         arr[j + 1] = key
+
 def sort_after_max(arr):
     if not arr:
         return
     max_index = arr.index(max(arr))
-    sub_array = arr[max_index + 1:]
-    insertion_sort(sub_array)
-    arr[max_index + 1:] = sub_array
-A = list(map(int, input("Введите 9 элементов массива A, разделенных пробелами: ").split()))
-B = list(map(int, input("Введите 11 элементов массива B, разделенных пробелами: ").split()))
-if len(A) != 9 or len(B) != 11:
-    print("Ошибка: Пожалуйста, убедитесь, что введено ровно 9 элементов для A и 11 элементов для B.")
-else:
+    if max_index < len(arr) - 1:
+        sub_array = arr[max_index + 1:]
+        insertion_sort(sub_array)
+        arr[max_index + 1:] = sub_array
+
+def get_array_elements(prompt, expected_length):
+    while True:
+        arr = list(map(int, input(prompt).split()))
+        if len(arr) == expected_length:
+            return arr
+        print(f"Ошибка: Пожалуйста, введите ровно {expected_length} элементов.")
+
+def main():
+    
+    A = get_array_elements("Введите 9 элементов массива A, разделенных пробелами: ", 9)
+    B = get_array_elements("Введите 11 элементов массива B, разделенных пробелами: ", 11)
+
     print("Исходный массив A:", A)
     print("Исходный массив B:", B)
+
     sort_after_max(A)
     print("Отсортированный массив A после максимального элемента:", A)
     sort_after_max(B)
     print("Отсортированный массив B после максимального элемента:", B)
+
+if __name__ == "__main__":
+    main()
