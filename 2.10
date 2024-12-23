@@ -1,37 +1,40 @@
 # В заданной квадратной матрице найти максимальный элемент среди элементов, расположенных ниже главной диагонали (включая диагональ), и минимальный элемент среди элементов, расположенных выше главной диагонали. Удалить столбцы, в которых они находятся. Удаление столбца оформить в виде метода.
-# Наеюсь, что я правильно поняла задание
 print('Задание 2.10')
 import numpy as np
-
 def remove_column(mat, c_index):
+    """Удаляет столбец с указанным индексом из матрицы."""
     return np.delete(mat, c_index, axis=1)
 def main():
     n = int(input("Введите размер квадратной матрицы (n x n): "))
     mat = []
+    
     print("Введите элементы матрицы по строкам:")
     for i in range(n):
-        r = list(map(int, input(f"Строка {i + 1}: ").split()))
-        mat.append(r)
+        while True:
+            try:
+                row = list(map(int, input(f"Строка {i + 1}: ").split()))
+                if len(row) != n:
+                    raise ValueError("Количество элементов в строке должно быть равно n.")
+                mat.append(row)
+                break
+            except ValueError as e:
+                print(f"Ошибка: {e}. Пожалуйста, введите корректные целые числа.")
+    
     mat = np.array(mat)
-    max_b_diagonal = -np.inf
-    max_c_index = -1
-    for i in range(n):
-        for j in range(i + 1):
-            if mat[i, j] > max_b_diagonal:
-                max_b_diagonal = mat[i, j]
-                max_c_index = j
-    min_a_diagonal = np.inf
-    min_c_index = -1
-    for i in range(n):
-        for j in range(i + 1, n):
-            if mat[i, j] < min_a_diagonal:
-                min_a_diagonal = mat[i, j]
-                min_c_index = j
+    max_b_diagonal = np.max(mat[np.tril_indices(n)])
+    max_b_index = np.where(mat == max_b_diagonal)
+    max_c_index = max_b_index[1][0]
+    min_a_diagonal = np.min(mat[np.triu_indices(n, k=1)])
+    min_a_index = np.where(mat == min_a_diagonal)
+    min_c_index = min_a_index[1][0]
+
     mat = remove_column(mat, max_c_index)
     if min_c_index > max_c_index:
         min_c_index -= 1
     mat = remove_column(mat, min_c_index)
+
     print("Матрица после удаления столбцов:")
     print(mat)
+
 if __name__ == "__main__":
     main()
