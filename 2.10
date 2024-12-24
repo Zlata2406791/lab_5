@@ -1,40 +1,63 @@
 # В заданной квадратной матрице найти максимальный элемент среди элементов, расположенных ниже главной диагонали (включая диагональ), и минимальный элемент среди элементов, расположенных выше главной диагонали. Удалить столбцы, в которых они находятся. Удаление столбца оформить в виде метода.
 print('Задание 2.10')
 import numpy as np
-def remove_column(mat, c_index):
-    """Удаляет столбец с указанным индексом из матрицы."""
-    return np.delete(mat, c_index, axis=1)
-def main():
-    n = int(input("Введите размер квадратной матрицы (n x n): "))
-    mat = []
-    
-    print("Введите элементы матрицы по строкам:")
-    for i in range(n):
-        while True:
-            try:
-                row = list(map(int, input(f"Строка {i + 1}: ").split()))
-                if len(row) != n:
-                    raise ValueError("Количество элементов в строке должно быть равно n.")
-                mat.append(row)
-                break
-            except ValueError as e:
-                print(f"Ошибка: {e}. Пожалуйста, введите корректные целые числа.")
-    
-    mat = np.array(mat)
-    max_b_diagonal = np.max(mat[np.tril_indices(n)])
-    max_b_index = np.where(mat == max_b_diagonal)
-    max_c_index = max_b_index[1][0]
-    min_a_diagonal = np.min(mat[np.triu_indices(n, k=1)])
-    min_a_index = np.where(mat == min_a_diagonal)
-    min_c_index = min_a_index[1][0]
 
-    mat = remove_column(mat, max_c_index)
-    if min_c_index > max_c_index:
-        min_c_index -= 1
-    mat = remove_column(mat, min_c_index)
+class MatrixProcessor:
+    def __init__(self, matrix):
+        self.matrix = matrix
+    def find_max_below_diagonal(self):
+        max_element = -np.inf
+        max_position = (-1, -1)
+        size = self.matrix.shape[0]
+        for i in range(size):
+            for j in range(i + 1):
+                if self.matrix[i, j] > max_element:
+                    max_element = self.matrix[i, j]
+                    max_position = (i, j)
+        return max_element, max_position
 
-    print("Матрица после удаления столбцов:")
-    print(mat)
+    def find_min_above_diagonal(self):
+        min_element = np.inf
+        min_position = (-1, -1)
+        
+        size = self.matrix.shape[0]
+        for i in range(size):
+            for j in range(i + 1, size):
+                if self.matrix[i, j] < min_element:
+                    min_element = self.matrix[i, j]
+                    min_position = (i, j)
 
-if __name__ == "__main__":
-    main()
+        return min_element, min_position
+
+    def remove_column(self, col_index):
+        self.matrix = np.delete(self.matrix, col_index, axis=1)
+
+    def process_matrix(self):
+        max_element, max_position = self.find_max_below_diagonal()
+        min_element, min_position = self.find_min_above_diagonal()
+        print(f"Максимальный элемент ниже главной диагонали: {max_element}")
+        print(f"Минимальный элемент выше главной диагонали: {min_element}")
+        columns_to_remove = {max_position[1], min_position[1]}
+
+        for col_index in sorted(columns_to_remove, reverse=True):
+            self.remove_column(col_index)
+
+        print("Обновленная матрица:")
+        print(self.matrix)
+
+def input_matrix(size):
+    matrix = []
+    print(f"Введите значения матрицы {size}x{size}:")
+    for i in range(size):
+        row = list(map(int, input(f"Строка {i + 1}: ").split()))
+        while len(row) != size:
+            print(f"Ошибка: введите ровно {size} элементов.")
+            row = list(map(int, input(f"Строка {i + 1}: ").split()))
+        matrix.append(row)
+    return np.array(matrix)
+
+size = int(input("Введите размер квадратной матрицы: "))
+matrix = input_matrix(size)
+
+processor = MatrixProcessor(matrix)
+processor.process_matrix()
